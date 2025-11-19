@@ -1,150 +1,121 @@
-ChatGPT said:
+🟦 1. Launch EC2 Instance
+Recommended Configuration:
 
-Got you.
-I will give you FULL, CLEAN, CORRECT STEPS FROM THE VERY BEGINNING for deploying your Maven Web Application using Docker on AWS EC2 (Amazon Linux 2023).
+AMI: Amazon Linux 2023
 
-This is EXACTLY the version you should follow in your SE Lab Exam.
+Type: t2.micro (Free Tier)
 
-🎯 COMPLETE DOCKER + MAVEN + AWS EC2 DEPLOYMENT (START → END)
+Security Group Rules:
 
-Suitable for ANY Maven Web Project (your project has src/main/webapp, so these steps are correct).
+Type	Port	Source
+SSH	22	0.0.0.0/0
+HTTP	80	0.0.0.0/0
+HTTPS	443	0.0.0.0/0
+Custom TCP	8080	0.0.0.0/0
+🟦 2. Connect to EC2
 
-🟦 STEP 1 — Launch EC2 Instance
+From AWS Console:
 
-Choose:
+EC2 → Instances → Select → Connect → EC2 Instance Connect
 
-AMI: Amazon Linux 2023 AMI
-
-Instance type: t2.micro
-
-Key pair: create or select
-
-Security group: allow
-
-SSH (22)
-
-HTTP (80)
-
-HTTPS (443)
-
-Custom TCP (8080) → 0.0.0.0/0
-
-Launch instance.
-
-🟦 STEP 2 — Connect to EC2
-
-In AWS Console → EC2 → Instances → Select instance → Connect → EC2 Instance Connect
-
-Terminal opens as:
+Terminal will open as:
 
 ec2-user@ip-xx-xx-xx-xx
 
-🟦 STEP 3 — Update EC2
+🟦 3. Update EC2 Machine
 sudo dnf update -y
 
-🟦 STEP 4 — Install Java 17
+🟦 4. Install Java 17
 sudo dnf install java-17-amazon-corretto -y
 
 
-Check:
+Verify:
 
 java -version
 
-🟦 STEP 5 — Install Maven
+🟦 5. Install Maven
 sudo dnf install maven -y
 
 
-Check:
+Verify:
 
 mvn -version
 
-🟦 STEP 6 — Install Git
+🟦 6. Install Git
 sudo dnf install git -y
 
 
-Check:
+Verify:
 
 git --version
 
-🟦 STEP 7 — Clone Your Maven Project
+🟦 7. Clone Your Maven Project
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
+
 
 Example:
 
 git clone https://github.com/shashank1369/maven.git
 cd maven
 
-🟦 STEP 8 — Build the WAR
+🟦 8. Build the WAR File
 mvn clean package
 
 
-Your WAR will appear in:
+WAR output:
 
 target/*.war
 
-🟦 STEP 9 — Install Docker
-(Amazon Linux 2023 requires DNF)
+
+If BUILD SUCCESS appears → continue.
+
+🟦 9. Install Docker (Amazon Linux 2023)
 1️⃣ Install Docker
 sudo dnf install docker -y
 
 2️⃣ Start Docker
 sudo systemctl start docker
 
-3️⃣ Enable Docker permanently
+3️⃣ Enable Docker on boot
 sudo systemctl enable docker
 
-4️⃣ Give permission to ec2-user
+4️⃣ Add ec2-user to docker group
 sudo usermod -aG docker ec2-user
 
-5️⃣ Refresh group (important)
+5️⃣ Refresh group permissions
 newgrp docker
 
-6️⃣ Verify
+6️⃣ Verify Docker
 docker --version
 
+🟦 10. Build Docker Image
 
-Docker MUST work before going ahead.
-
-🟦 STEP 10 — Build Docker Image
-
-Inside your project directory:
+Make sure the Dockerfile exists in the project root.
 
 docker build -t mywebapp .
 
-
-Make sure your Dockerfile is in the project root.
-
-🟦 STEP 11 — Run Docker Container
+🟦 11. Run Docker Container
 
 Expose port 8080:
 
 docker run -d -p 8080:8080 --name mycontainer mywebapp
 
 
-Check running:
+Check if container is running:
 
 docker ps
 
 
-You should see:
+Expected:
 
 mycontainer   Up X seconds
 
-🟦 STEP 12 — Add Inbound Rule for Port 8080 (If not added yet)
+🟦 12. Access the Web Application
 
-AWS Console → EC2 → Security groups → Inbound rules → Edit
+Open browser:
 
-Add:
-
-Type	Port	Source
-Custom TCP	8080	0.0.0.0/0
-
-Save.
-
-🟦 STEP 13 — Open App in Browser
-
-Get EC2 Public IP → open:
-
-http://<your-ip>:8080/
+http://<YOUR-EC2-PUBLIC-IP>:8080/
 
 
 Example:
@@ -152,15 +123,23 @@ Example:
 http://13.220.90.161:8080/
 
 
-Your app should load successfully.
+Your app should now load successfully.
 
-🟦 STEP 14 — If app stops later
+🟦 13. Common Commands
+Stop container:
+docker stop mycontainer
 
-Start container manually:
-
+Start container:
 docker start mycontainer
 
+Remove container:
+docker rm mycontainer
 
-Enable auto-restart:
+View logs:
+docker logs mycontainer
+
+🟦 14. Auto-Restart on Reboot
+
+(Optional but useful)
 
 docker update --restart unless-stopped mycontainer
