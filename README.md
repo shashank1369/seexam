@@ -1,17 +1,17 @@
-sudo dnf update -y
-sudo dnf install docker -y
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker ec2-user
-newgrp docker
-docker --version
-docker images
-docker ps
-git clone <repo>
-cd <repo>
-nano Dockerfile
-docker build -t filename .
-docker run -d -p 9090:8080 filename
+sudo dnf update -y ------
+----sudo dnf install docker -y
+-----sudo systemctl start docker
+-----sudo systemctl enable docker
+----sudo usermod -aG docker ec2-user
+----newgrp docker
+-----docker --version
+---docker images
+----docker ps
+-----git clone <repo>
+-----cd <repo>
+------nano Dockerfile
+-------docker build -t filename .
+----docker run -d -p 9090:8080 filename
 
 
 
